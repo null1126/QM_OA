@@ -5,7 +5,7 @@
 </template>
 <script>
 export default {
-    
+    name: "Addpost"
 }
 </script>
 <style lang="less" scoped>
