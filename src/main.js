@@ -6,7 +6,6 @@ import './plugins/element.js'
 import './assets/fonts/iconfont.css'
 // 导入全局样式表
 import './assets/css/globla.css'
-
 import axios from 'axios'
 axios.defaults.baseURL = '/api'
 Vue.prototype.$http = axios

@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import { Button, Loading, Form, FormItem, Input, Message, Container, Header, Aside, Main, Menu, Submenu, MenuItem, MenuItemGroup, Breadcrumb, BreadcrumbItem, Card, Row, Col, Table, TableColumn, Switch, Dialog, Radio, MessageBox, Pagination, DatePicker, Option, Select, CheckboxGroup, Checkbox, TimePicker } from 'element-ui'
+import { Button, Form, FormItem,Loading, Input, Message, Container, Header, Aside, Main, Menu, Submenu, MenuItem, MenuItemGroup, Breadcrumb, BreadcrumbItem, Card, Row, Col, Table, TableColumn, Switch, Dialog, Radio, MessageBox, Pagination, DatePicker, Option, Select, CheckboxGroup, Checkbox, RadioGroup } from 'element-ui'
 
 Vue.use(Button)
 Vue.use(Form)
@@ -30,8 +30,8 @@ Vue.use(Option)
 Vue.use(Select)
 Vue.use(CheckboxGroup)
 Vue.use(Checkbox)
-Vue.use(TimePicker)
+Vue.use(RadioGroup)
+Vue.use(Loading.directive);
+Vue.prototype.$loading = Loading.service;
 Vue.prototype.$message = Message
 Vue.prototype.$confirm = MessageBox.confirm
-Vue.prototype.$prompt = MessageBox.prompt
-Vue.prototype.$loading = Loading.service

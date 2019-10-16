@@ -12,57 +12,40 @@ import Wages from './components/wage/Wages.vue'
 import Leave from './components/leave/Leaves.vue'
 import Proje from './components/proje/Proje.vue'
 import Kings from './components/clock/King.vue'
-import Vacat from './components/leave/Vacat.vue'
-import Apply from './components/apply/Apply.vue'
-import Notpass from './components/apply/Notpass.vue'
-import Pass from './components/apply/Pass.vue'
-import Cancel from './components/apply/Cancel.vue'
-import Subsidy from './components/subsidy/Subsidy.vue'
-import Award from './components/wage/Award.vue'
-import Punish from './components/wage/Punish.vue'
-import Addpost from './components/authority/Addpost.vue'
+import Leavs from './components/leave/Leavs.vue'
+import Delavs from './components/leave/Delavs.vue'
 
 Vue.use(Router)
 
 const router = new Router({
-    routes: [
-        { path: '/', redirect: '/login' },
-        { path: '/login', component: Login },
-        {
-            path: '/home',
-            component: Home,
-            redirect: '/welcome',
-            children: [
-                { path: '/welcome', component: Welcome },
-                { path: '/users', component: Users },
-                { path: '/rights', component: Rights },
-                { path: '/itions', component: Itions },
-                { path: '/clock', component: Clock },
-                { path: '/chenks', component: Chenk },
-                { path: '/king', component: Kings },
-                { path: '/wages', component: Wages },
-                { path: '/leave', component: Leave },
-                { path: '/vacat', component: Vacat },
-                { path: '/proje', component: Proje },
-                { path: '/apply', component: Apply },
-                { path: '/notpass', component: Notpass },
-                { path: '/pass', component: Pass },
-                { path: '/cancel', component: Cancel },
-                { path: '/subsidy', component: Subsidy },
-                { path: '/award', component: Award },
-                { path: '/punish', component: Punish },
-                { path: '/addpost', component: Addpost }
-            ]
-        }
-    ]
+  routes: [
+    { path: '/', redirect: '/login' },
+    { path: '/login', component: Login },
+    {
+      path: '/home', component: Home, redirect: '/welcome', children: [
+        { path: '/welcome', component: Welcome },
+        { path: '/users', component: Users },
+        { path: '/rights', component: Rights },
+        { path: '/itions', component: Itions },
+        { path: '/clock', component: Clock },
+        { path: '/chenks', component: Chenk },
+        { path: '/king', component: Kings },
+        { path: '/wages', component: Wages },
+        { path: '/leave', component: Leave },
+        { path: '/leavs', component: Leavs },
+        { path: '/delavs', component: Delavs },
+        { path: '/proje', component: Proje }
+      ]
+    }
+  ]
 })
 
 // 挂载路由导航守卫
 router.beforeEach((to, from, next) => {
-    if (to.path === '/login') return next()
-    const tokenStr = window.sessionStorage.getItem('token')
-    if (!tokenStr) return next('/login')
-    next()
+  if (to.path === '/login') return next();
+  const tokenStr = window.sessionStorage.getItem('token')
+  if (!tokenStr) return next('/login')
+  next()
 })
 
 export default router

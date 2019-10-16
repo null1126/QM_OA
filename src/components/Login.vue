@@ -55,8 +55,8 @@ export default {
           this.loginForm
         )
         console.log(res)
-        if (res.code !== 200) return this.$message.error('登录失败！')
-        this.$message.success('登录成功！')
+        if (res.code !== '200') return this.$message.error(res.msg)
+        this.$message.success(res.msg)
         console.log(res)
         window.sessionStorage.setItem('token', res.code)
         this.$router.push('/home')

@@ -19,10 +19,14 @@
           <el-button type="primary" @click="addDialogVisible = true">添加员工用户</el-button>
         </el-col>
       </el-row>
-      <el-table :data="getStalist" border stripe>
+      <el-table :data="getStalist.data" border stripe>
         <el-table-column type="index"></el-table-column>
         <el-table-column label="姓名" prop="name"></el-table-column>
-        <el-table-column label="性别" prop="sex"></el-table-column>
+        <el-table-column label="性别" prop="sex">
+          <template slot-scope="scope">
+            <span>{{scope.row.sex=='0'?'男':'女'}}</span>
+          </template>
+        </el-table-column>
         <el-table-column label="手机号码" prop="phone"></el-table-column>
         <el-table-column label="职位" prop="zhiwei"></el-table-column>
         <el-table-column label="员工号" prop="yid"></el-table-column>
@@ -54,9 +58,7 @@
           <el-input v-model="showForm.name" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="手机号码">
-          <el-input v-model="showForm.phone">
-            <!-- 这里自己用rule去监听他的格式吧  我就不写正则了 -->
-          </el-input>
+          <el-input v-model="showForm.phone"></el-input>
         </el-form-item>
         <el-form-item label="员工工号">
           <el-input
@@ -70,13 +72,12 @@
         </el-form-item>
         <el-form-item label="职位">
           <template>
-            <el-select v-model="showForm.zhiwei" placeholder="请选择">
+            <el-select v-model="showForm.position_id" placeholder="请选择">
               <el-option
                 v-for="item in getPolist"
                 :key="item.id"
                 :label="item.name"
                 :value="item.id"
-                v-bind:item="name"
               ></el-option>
             </el-select>
           </template>
@@ -87,7 +88,7 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="editDialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="showInfo(id,position_id,money)">确 定</el-button>
+        <el-button type="primary" @click="showInfo">确 定</el-button>
       </span>
     </el-dialog>
     <!-- 添加对话框 -->
@@ -166,7 +167,7 @@ export default {
       },
       addFotmRules: {
         name: [{ required: true, message: '请输入姓名', trigger: 'blur' }],
-        sexz: [{ required: true, message: '选择性别', trigger: 'blur' }],
+        sex: [{ required: true, message: '选择性别', trigger: 'blur' }],
         phone: [
           { required: true, message: '请输入手机号码', trigger: 'blur' },
           { required: true, trigger: 'blur', validator: validateMobilePhone }
@@ -186,13 +187,6 @@ export default {
     async getStaList() {
       const { data: res } = await this.$http.get('staff')
       console.log(res)
-      res.forEach(element => {
-        if (element.sex == '0') {
-          element.sex = '男'
-        } else {
-          element.sex = '女'
-        }
-      })
       this.getStalist = res
     },
     // 搜索
@@ -203,19 +197,12 @@ export default {
         return this.$message.error('查询数据失败！')
       }
       this.$message.success('查询数据成功！')
-      res.data.forEach(element => {
-        if (element.sex == '0') {
-          element.sex = '男'
-        } else {
-          element.sex = '女'
-        }
-      })
-      this.getStalist = res.data
+      this.getStalist = res
     },
     // 修改
     async showDialog(id) {
       const { data: res } = await this.$http.post('staffsele/', { id: id })
-      console.log(res)
+      console.log(res,'info')
       this.showForm = res.data[0]
       this.editDialogVisible = true
     },
@@ -248,8 +235,9 @@ export default {
     async showInfo() {
       let parmas = {
         id: this.showForm.id,
-        position_id: this.showForm.zhiwei,
-        money: this.postMoney
+        position_id: this.showForm.position_id,
+        money: this.postMoney,
+        phone:this.showForm.phone
       }
       const { data: res } = await this.$http.post('staffupda', parmas)
       console.log(res)
@@ -261,12 +249,13 @@ export default {
       this.$message.success('修改成功！')
     },
     async addRight() {
-      const { data: res } = await this.$http.post('staffinse', this.addFotm)
-      console.log(res)
-      this.getPoList()
-      if (res.code == '404') return this.$message.error(res.msg)
-      this.addDialogVisible = false
-      this.getStaList()
+      this.$refs.addFotmRef.validate(async valid => {
+        if (!valid) return
+        const { data: res } = await this.$http.post('staffinse', this.addFotm)
+        if (res.code == '404') return this.$message.error(res.msg)
+        this.addDialogVisible = false
+        this.getStaList()
+      })
     },
     async retesDialog(id) {
       console.log(id)

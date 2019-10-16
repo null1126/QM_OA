@@ -25,10 +25,10 @@
           <el-table-column label="工作时间" prop="start"></el-table-column>
           <el-table-column label="工作时间" prop="end"></el-table-column>
           <el-table-column label="操作">
-            <!-- <template slot-scope="scope"> -->
+            <template slot-scope="scope">
               <el-button type="primary" icon="el-icon-plus" size="mini" @click="showWage"></el-button>
               <el-button type="primary" icon="el-icon-edit" size="mini"></el-button>
-            <!-- </template> -->
+            </template>
           </el-table-column>
         </el-table>
         <!-- 添加工资的对话框 -->

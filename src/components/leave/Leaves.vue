@@ -4,29 +4,39 @@
     <el-breadcrumb separator="/">
       <el-breadcrumb-item :to="{ path: '/home' }">首页</el-breadcrumb-item>
       <el-breadcrumb-item>请假条</el-breadcrumb-item>
-      <el-breadcrumb-item>员工请假记录</el-breadcrumb-item>
+      <el-breadcrumb-item>员工请假待审核</el-breadcrumb-item>
     </el-breadcrumb>
     <!-- 卡片视图 -->
     <el-card>
-      <!-- 搜索区域 -->
-      <el-row>
-        <el-col :span="6">
-          <el-input placeholder="请输入内容">
-            <el-button slot="append" icon="el-icon-search"></el-button>
-          </el-input>
-        </el-col>
-      </el-row>
-      <el-table :data="getlealist" border stripe>
+      <el-table :data="getlealist.data" border stripe>
         <el-table-column type="index"></el-table-column>
-        <el-table-column label="员工ID" prop="uid"></el-table-column>
-        <el-table-column label="假期类型" prop="choice"></el-table-column>
-        <el-table-column label="起始时间" prop="start"></el-table-column>
-        <el-table-column label="截止时间" prop="end"></el-table-column>
-        <el-table-column label="天数" prop="day"></el-table-column>
-        <el-table-column label="状态" prop="status"></el-table-column>
-        <el-table-column label="操作"></el-table-column>
+        <el-table-column label="员工姓名" prop="name"></el-table-column>
+        <el-table-column label="员工电话" prop="phone"></el-table-column>
+        <el-table-column label="请假类型" prop="status">
+          <template slot-scope="scope">
+            <span>{{scope.row.status==0?'请假':'调休'}}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="请假理由" prop="reason"></el-table-column>
+        <el-table-column label="操作">
+          <template slot-scope="scope">
+            <el-button type="danger" size="mini" @click="Fusr(scope.row.id)">拒绝</el-button>
+            <el-button type="primary" size="mini" @click="Agree(scope.row.id)">同意</el-button>
+          </template>
+        </el-table-column>
       </el-table>
     </el-card>
+    <el-dialog title="拒绝申请" :visible.sync="FusesDialogVisible" width="50%" @close="fuesFormClosed">
+      <el-form :model="fuesForm" :rules="fuesFormRules" ref="fuesFormRef" label-width="100px">
+        <el-form-item label="拒绝理由" prop="audit_reason">
+          <el-input v-model="fuesForm.audit_reason"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="FusesDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="FusesDia()">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -34,7 +44,14 @@
 export default {
   data() {
     return {
-      getlealist: []
+      getlealist: [],
+      FusesDialogVisible: false,
+      fuesForm: {},
+      fuesFormRules: {
+        audit_reason: [
+          { required: true, message: '请输入拒绝请假理由', trigger: 'blur' }
+        ]
+      }
     }
   },
   created() {
@@ -42,26 +59,36 @@ export default {
   },
   methods: {
     async getLeaList() {
-      const { data: res } = await this.$http.get('leave')
-      console.log(res)
-      res.forEach(element => {
-        if (element.choice == "0") {
-          element.choice = '事假'
-        } else if(element.choice == "1") {
-          element.choice = '病假'
-        } else {
-            element.choice = '调休'
-        }
-      })
-      res.forEach(element => {
-        if (element.status == "0") {
-          element.status = '待审核'
-        } else if(element.status == "1") {
-          element.status = '已通过'
-        } else {
-            element.status = '未通过'
-        }
-      })
+      const { data: res } = await this.$http.get('applyaudit1')
+      if (res.code !== '200') {
+        return this.$message.error(res.msg)
+      }
+      this.getlealist = res
+    },
+    fuesFormClosed() {
+      this.$refs.fuesFormRef.resetFields()
+    },
+    async Fusr(id) {
+      const { data: res } = await this.$http.post('applyfinid', { id: id })
+      this.fuesForm = res.data
+      this.FusesDialogVisible = true
+    },
+    // 拒绝
+    async FusesDia() {
+      const { data: res } = await this.$http.post('applyrefuse', this.fuesForm)
+      if (res.code !== '200') {
+        return this.$message.error(res.msg)
+      }
+      this.FusesDialogVisible = false
+      this.getlealist = res
+      this.$message.success(res.msg)
+    },
+    async Agree(id) {
+      const { data: res } = await this.$http.post('applyconsent',{id:id})
+      if(res.code !== '200') {
+        return this.$message.error(res.msg)
+      }
+      
       this.getlealist = res
     }
   }

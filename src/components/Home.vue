@@ -45,7 +45,6 @@
               </template>
             </el-menu-item>
           </el-submenu>
-
           <el-submenu index="2">
             <template slot="title">
               <i class="el-icon-s-marketing"></i>
@@ -70,7 +69,6 @@
               </template>
             </el-menu-item>
           </el-submenu>
-
           <el-submenu index="3">
             <template slot="title">
               <i class="el-icon-s-claim"></i>
@@ -82,20 +80,7 @@
                 <span>薪资记录</span>
               </template>
             </el-menu-item>
-            <el-menu-item index="/award">
-              <template slot="title">
-                <i class="el-icon-menu"></i>
-                <span>员工奖励</span>
-              </template>
-            </el-menu-item>
-            <el-menu-item index="/punish">
-              <template slot="title">
-                <i class="el-icon-menu"></i>
-                <span>员工惩罚</span>
-              </template>
-            </el-menu-item>
           </el-submenu>
-
           <el-submenu index="4">
             <template slot="title">
               <i class="el-icon-s-claim"></i>
@@ -104,17 +89,22 @@
             <el-menu-item index="/leave">
               <template slot="title">
                 <i class="el-icon-menu"></i>
-                <span>员工请假记录</span>
+                <span>请假待审核区</span>
               </template>
             </el-menu-item>
-            <el-menu-item index="/vacat">
+            <el-menu-item index="/leavs">
               <template slot="title">
                 <i class="el-icon-menu"></i>
-                <span>假期安排</span>
+                <span>请假审核通过记录</span>
+              </template>
+            </el-menu-item>
+            <el-menu-item index="/delavs">
+              <template slot="title">
+                <i class="el-icon-menu"></i>
+                <span>请假审核拒绝记录</span>
               </template>
             </el-menu-item>
           </el-submenu>
-
           <el-submenu index="5">
             <template slot="title">
               <i class="el-icon-s-claim"></i>
@@ -124,63 +114,6 @@
               <template slot="title">
                 <i class="el-icon-menu"></i>
                 <span>项目信息</span>
-              </template>
-            </el-menu-item>
-          </el-submenu>
-
-          <el-submenu index="6">
-            <template slot="title">
-              <i class="el-icon-s-claim"></i>
-              <span>后台报销</span>
-            </template>
-            <el-menu-item index="/apply">
-              <template slot="title">
-                <i class="el-icon-menu"></i>
-                <span>报销待审核</span>
-              </template>
-            </el-menu-item>
-            <el-menu-item index="/notpass">
-              <template slot="title">
-                <i class="el-icon-menu"></i>
-                <span>审核未通过</span>
-              </template>
-            </el-menu-item>
-            <el-menu-item index="pass">
-              <template slot="title">
-                <i class="el-icon-menu"></i>
-                <span>审核通过</span>
-              </template>
-            </el-menu-item>
-            <el-menu-item index="cancel">
-              <template slot="title">
-                <i class="el-icon-menu"></i>
-                <span>取消报销</span>
-              </template>
-            </el-menu-item>
-          </el-submenu>
-
-          <el-submenu index="7">
-            <template slot="title">
-              <i class="el-icon-s-claim"></i>
-              <span>后台补贴</span>
-            </template>
-            <el-menu-item index="/subsidy">
-              <template slot="title">
-                <i class="el-icon-menu"></i>
-                <span>补贴内容</span>
-              </template>
-            </el-menu-item>
-          </el-submenu>
-
-          <el-submenu index="8">
-            <template slot="title">
-              <i class="el-icon-s-claim"></i>
-              <span>权限管理</span>
-            </template>
-            <el-menu-item index="/addpost">
-              <template slot="title">
-                <i class="el-icon-menu"></i>
-                <span>添加职位</span>
               </template>
             </el-menu-item>
           </el-submenu>
@@ -198,23 +131,27 @@
 export default {
   data() {
     return {
-      activePath: ""
-    };
+      activePath: ''
+    }
   },
   created() {
-    this.activePath = this.$route.fullPath;
+    this.activePath = this.$route.fullPath
   },
   methods: {
-    logout() {
-      window.sessionStorage.clear();
-      this.$router.push("/login");
+    async logout() {
+      const { data: res } = await this.$http.post('quitadmin')
+      if (res.code == '200') {
+        return this.$message.success(res.msg)
+      }
+      window.sessionStorage.clear()
+      this.$router.push('/login')
     },
     // 保存连接的激活状态
     saveNavState(activePath) {
-      window.sessionStorage.setItem("activePath", activePath);
+      window.sessionStorage.setItem('activePath', activePath)
     }
   }
-};
+}
 </script>
 
 <style lang="less" scoped>
